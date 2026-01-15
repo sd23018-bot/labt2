@@ -2,7 +2,7 @@ import json
 import operator
 import streamlit as st
 
-# Define the operations dictionary
+
 OPS = {
     "==": operator.eq,
     "!=": operator.ne,
@@ -14,7 +14,7 @@ OPS = {
     "not_in": lambda a, b: a not in b,
 }
 
-# Define the rules in JSON format
+
 RULES = [
     {
         "name": "Windows open → turn AC off",
@@ -117,7 +117,7 @@ RULES = [
     }
 ]
 
-# Function to evaluate condition
+
 def evaluate_condition(facts, cond):
     """Evaluate a single condition: [field, operator, value]."""
     field, op, value = cond
@@ -128,12 +128,12 @@ def evaluate_condition(facts, cond):
     except Exception:
         return False
 
-# Function to evaluate rule
+
 def rule_matches(facts, rule):
     """Check if all conditions in a rule are satisfied (AND logic)."""
     return all(evaluate_condition(facts, c) for c in rule.get("conditions", []))
 
-# Function to run all rules
+
 def run_rules(facts, rules):
     fired = [r for r in rules if rule_matches(facts, r)]
     if not fired:
@@ -142,12 +142,12 @@ def run_rules(facts, rules):
     best = fired_sorted[0]["action"]
     return best
 
-# Streamlit app setup
+
 st.set_page_config(page_title="Smart Home AC Controller", layout="wide")
 st.title("Smart Home Air Conditioner Controller")
 st.caption("Enter your home conditions and evaluate the optimal AC settings.")
 
-# Sidebar inputs for home conditions
+
 with st.sidebar:
     st.header("Home Conditions")
     temperature = st.number_input("Temperature (°C)", min_value=10, max_value=50, value=22)
@@ -156,7 +156,7 @@ with st.sidebar:
     time_of_day = st.selectbox("Time of Day", ["MORNING", "AFTERNOON", "EVENING", "NIGHT"], index=3)
     windows_open = st.checkbox("Windows Open", value=False)
 
-# Facts to evaluate
+
 facts = {
     "temperature": float(temperature),
     "humidity": int(humidity),
@@ -165,11 +165,11 @@ facts = {
     "windows_open": windows_open
 }
 
-# Display input facts
+
 st.subheader("Current Home Facts")
 st.json(facts)
 
-# Evaluate and display result
+
 if st.button("Evaluate AC Settings"):
     result = run_rules(facts, RULES)
     
@@ -178,3 +178,4 @@ if st.button("Evaluate AC Settings"):
     st.write(f"**Fan Speed:** {result['fan_speed']}")
     st.write(f"**Setpoint Temperature:** {result['setpoint']}")
     st.write(f"**Reason:** {result['reason']}")
+
